@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Minio;
 using Minio.DataModel.Args;
@@ -8,6 +9,7 @@ namespace InstagramClone.Api.Controllers;
 
 [Route("api/media")]
 [ApiController]
+[Authorize]
 public class MediaController : ControllerBase
 {
     private readonly IMinioClient _minioClient;
