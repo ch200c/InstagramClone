@@ -74,3 +74,7 @@ HTTP POST `/media` allows uploading objects to the selected bucket. After a succ
 
 ![Object upload](images/upload.png "Object upload")
 ![MinIO Console](images/minio-console.png "MinIO Console")
+
+## TODO
+- Change `/logout` endpoint tags to be the same as other authentication endpoints
+- Token based authentication may not be represented correctly due to https://github.com/scalar/scalar/issues/4055
