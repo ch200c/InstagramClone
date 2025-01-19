@@ -7,6 +7,7 @@ namespace InstagramClone.Api.Controllers;
 [Route("/")]
 [Authorize]
 [ApiController]
+[Tags("InstagramClone.Api")]
 public class IdentityController : ControllerBase
 {
     private readonly SignInManager<IdentityUser> _signInManager;
@@ -17,9 +18,9 @@ public class IdentityController : ControllerBase
     }
 
     [HttpPost("logout")]
-    public async Task<IResult> Logout()
+    public async Task<OkResult> Logout()
     {
         await _signInManager.SignOutAsync();
-        return Results.Ok();
+        return Ok();
     }
 }

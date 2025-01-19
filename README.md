@@ -76,5 +76,7 @@ HTTP POST `/media` allows uploading objects to the selected bucket. After a succ
 ![MinIO Console](images/minio-console.png "MinIO Console")
 
 ## TODO
-- Change `/logout` endpoint tags to be the same as other authentication endpoints
+- Error handling
+- Remove bucket specification when creating media
 - Token based authentication may not be represented correctly due to https://github.com/scalar/scalar/issues/4055
+- Use `TypedResults` when https://github.com/dotnet/aspnetcore/issues/44988 is resolved
