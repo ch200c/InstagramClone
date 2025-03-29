@@ -1,3 +1,4 @@
+using InstagramClone.Api.Application;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Minio;
@@ -13,10 +14,12 @@ namespace InstagramClone.Api.Controllers;
 public class MediaController : ControllerBase
 {
     private readonly IMinioClient _minioClient;
+    private readonly IBucketNameProvider _bucketNameProvider;
 
-    public MediaController(IMinioClient minioClient)
+    public MediaController(IMinioClient minioClient, IBucketNameProvider bucketNameProvider)
     {
         _minioClient = minioClient;
+        _bucketNameProvider = bucketNameProvider;
     }
 
     [Produces("application/json")]
@@ -26,7 +29,8 @@ public class MediaController : ControllerBase
     public async Task<ActionResult> CreateMedia(
         [FromBody] UploadMediaRequest request, CancellationToken cancellationToken)
     {
-        var bucketExistsArgs = new BucketExistsArgs().WithBucket(request.BucketName);
+        var bucketName = await _bucketNameProvider.GetBucketNameAsync(cancellationToken);
+        var bucketExistsArgs = new BucketExistsArgs().WithBucket(bucketName);
         bool isExistingBucket;
 
         try
@@ -40,12 +44,12 @@ public class MediaController : ControllerBase
 
         if (!isExistingBucket)
         {
-            var makeBucketArgs = new MakeBucketArgs().WithBucket(request.BucketName);
+            var makeBucketArgs = new MakeBucketArgs().WithBucket(bucketName);
             await _minioClient.MakeBucketAsync(makeBucketArgs, cancellationToken);
         }
 
         var putObjectArgs = new PutObjectArgs()
-            .WithBucket(request.BucketName)
+            .WithBucket(bucketName)
             .WithObject(Path.GetFileName(request.LocalPath))
             .WithFileName(request.LocalPath);
 
@@ -65,10 +69,11 @@ public class MediaController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult> GetMedia([FromQuery] GetMediaRequest request, CancellationToken cancellationToken)
     {
+        var bucketName = await _bucketNameProvider.GetBucketNameAsync(cancellationToken);
         var destinationStream = new MemoryStream();
 
         var args = new GetObjectArgs()
-            .WithBucket(request.BucketName)
+            .WithBucket(bucketName)
             .WithObject(request.ObjectName)
             .WithCallbackStream(async (s, ct) =>
             {
@@ -93,5 +98,5 @@ public class MediaController : ControllerBase
     }
 }
 
-public record UploadMediaRequest(string LocalPath, string BucketName);
-public record GetMediaRequest(string BucketName, string ObjectName);
+public record UploadMediaRequest(string LocalPath);
+public record GetMediaRequest(string ObjectName);

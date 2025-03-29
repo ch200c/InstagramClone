@@ -1,3 +1,5 @@
+using InstagramClone.Api.Application;
+using InstagramClone.Api.Infrastructure;
 using InstagramClone.Api.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -32,6 +34,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services
     .AddIdentityApiEndpoints<IdentityUser>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
+
+builder.Services.AddTransient<IBucketNameProvider, BucketNameProvider>();
 
 var app = builder.Build();
 
