@@ -30,22 +30,15 @@ public class MediaController : ControllerBase
         [FromBody] UploadMediaRequest request, CancellationToken cancellationToken)
     {
         var bucketName = await _bucketNameProvider.GetBucketNameAsync(cancellationToken);
-        var bucketExistsArgs = new BucketExistsArgs().WithBucket(bucketName);
-        bool isExistingBucket;
+        var makeBucketArgs = new MakeBucketArgs().WithBucket(bucketName);
 
         try
         {
-            isExistingBucket = await _minioClient.BucketExistsAsync(bucketExistsArgs, cancellationToken);
+            await _minioClient.MakeBucketAsync(makeBucketArgs, cancellationToken);
         }
         catch (InvalidBucketNameException ex)
         {
             return BadRequest(ex.ServerMessage);
-        }
-
-        if (!isExistingBucket)
-        {
-            var makeBucketArgs = new MakeBucketArgs().WithBucket(bucketName);
-            await _minioClient.MakeBucketAsync(makeBucketArgs, cancellationToken);
         }
 
         var putObjectArgs = new PutObjectArgs()
