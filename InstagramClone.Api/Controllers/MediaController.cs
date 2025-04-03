@@ -106,5 +106,5 @@ public class MediaController : ControllerBase
     }
 }
 
-public record UploadMediaRequest(string LocalPath);
+public record UploadMediaRequest(string LocalPath, string Title);
 public record GetMediaRequest(Guid Id);

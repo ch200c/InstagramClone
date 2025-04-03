@@ -14,13 +14,13 @@ Please perform these steps in the sequence they are listed.
 
 This command will create and use `C:/docker-sandbox/minio` directory as a persistent storage for the container. You can use any other file path that you have read, write and delete access. More information can be found in MinIO documentation [here](https://min.io/docs/minio/container/index.html#procedure). 
 
-`docker run -p 9000:9000 -p 9001:9001 --name minio1 -v C:/docker-sandbox/minio:/data -e "MINIO_ROOT_USER=ROOTUSER" -e "MINIO_ROOT_PASSWORD=CHANGEME123" -d --rm  quay.io/minio/minio:RELEASE.2024-12-18T13-15-44Z server data --console-address ":9001"`
+`docker run -p 9000:9000 -p 9001:9001 --name minio1 -v C:/docker-sandbox/minio:/data -e "MINIO_ROOT_USER=admin" -e "MINIO_ROOT_PASSWORD=min8chars" -d --rm  quay.io/minio/minio:RELEASE.2024-12-18T13-15-44Z server data --console-address ":9001"`
 
 Once the container is running, you can use http://localhost:9001/ to access MinIO Console.
 
 ### PostgreSQL
 
-`docker run --name postgres1 -e POSTGRES_PASSWORD=mysecretpassword -p 5432:5432 -d --rm postgres:17`
+`docker run --name postgres1 -e POSTGRES_PASSWORD=1234 -p 5432:5432 -d --rm postgres:17`
 
 ### Database migrations
 
@@ -77,5 +77,6 @@ HTTP POST `/media` allows uploading objects to the selected bucket. After a succ
 
 ## TODO
 - Error handling
+- Detect and support multiple media types
 - Token based authentication may not be represented correctly due to https://github.com/scalar/scalar/issues/4055
 - Use `TypedResults` when https://github.com/dotnet/aspnetcore/issues/44988 is resolved
