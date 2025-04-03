@@ -77,6 +77,9 @@ HTTP POST `/media` allows uploading objects to the selected bucket. After a succ
 
 ## TODO
 - Error handling
+- Move endpoint logic out of controllers
+- Check generated EF Core queries and potential issues
+- Handle empty title search
 - Detect and support multiple media types
 - Token based authentication may not be represented correctly due to https://github.com/scalar/scalar/issues/4055
 - Use `TypedResults` when https://github.com/dotnet/aspnetcore/issues/44988 is resolved

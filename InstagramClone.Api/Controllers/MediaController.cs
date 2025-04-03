@@ -55,7 +55,12 @@ public class MediaController : ControllerBase
 
         if (response.ResponseStatusCode == HttpStatusCode.OK)
         {
-            var userMedia = new UserMedia() { BucketName = bucketName, ObjectName = response.ObjectName };
+            var userMedia = new UserMedia()
+            {
+                BucketName = bucketName,
+                ObjectName = response.ObjectName,
+                Title = request.Title
+            };
             _dbContext.UserMedia.Add(userMedia);
             await _dbContext.SaveChangesAsync(cancellationToken);
 
@@ -104,7 +109,23 @@ public class MediaController : ControllerBase
         destinationStream.Position = 0;
         return File(destinationStream, "image/jpeg");
     }
+
+    [HttpGet("search")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<ActionResult> SearchMedia([FromQuery] SearchMediaRequest request, CancellationToken cancellationToken)
+    {
+        var ids = await _dbContext.UserMedia
+            .Where(u => u.Title != null && u.Title.Contains(request.Query))
+            .Take(10)
+            .OrderBy(u => u.Title)
+            .Select(u => u.Id)
+            .ToListAsync(cancellationToken);
+
+        return Ok(new SearchMediaResult(ids));
+    }
 }
 
 public record UploadMediaRequest(string LocalPath, string Title);
 public record GetMediaRequest(Guid Id);
+public record SearchMediaRequest(string Query);
+public record SearchMediaResult(IEnumerable<Guid> Ids);
