@@ -9,6 +9,8 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
 {
     public DbSet<UserBucketName> UserBucketNames { get; set; }
 
+    public DbSet<UserMedia> UserMedia { get; set; }
+
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
     {
     }

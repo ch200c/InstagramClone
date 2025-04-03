@@ -77,6 +77,5 @@ HTTP POST `/media` allows uploading objects to the selected bucket. After a succ
 
 ## TODO
 - Error handling
-- Get media by Id
 - Token based authentication may not be represented correctly due to https://github.com/scalar/scalar/issues/4055
 - Use `TypedResults` when https://github.com/dotnet/aspnetcore/issues/44988 is resolved
