@@ -29,14 +29,14 @@ public class BucketNameProvider : IBucketNameProvider
             ?? throw new BucketNameProviderException("Could not get Identity user");
 
         var existingUserBucketName = await _dbContext.UserBucketNames.SingleOrDefaultAsync(
-            u => u.IdentityUserId == identityUser.Id, cancellationToken);
+            u => u.UserId == identityUser.Id, cancellationToken);
 
         if (existingUserBucketName == null)
         {
             var userBucketName = new UserBucketName()
             {
                 BucketName = Guid.NewGuid().ToString(),
-                IdentityUserId = identityUser.Id
+                UserId = identityUser.Id
             };
 
             _dbContext.UserBucketNames.Add(userBucketName);

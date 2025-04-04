@@ -3,6 +3,6 @@
 public class UserBucketName
 {
     public int Id { get; set; }
-    public required string IdentityUserId { get; set; }
+    public required string UserId { get; set; }
     public required string BucketName { get; set; }
 }

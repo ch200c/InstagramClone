@@ -31,7 +31,7 @@ public class MediaController : ControllerBase
     [HttpPost("")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult> CreateMedia(
+    public async Task<ActionResult> CreateMediaAsync(
         [FromBody] UploadMediaRequest request, CancellationToken cancellationToken)
     {
         var bucketName = await _bucketNameProvider.GetBucketNameAsync(cancellationToken);
@@ -64,19 +64,19 @@ public class MediaController : ControllerBase
             _dbContext.UserMedia.Add(userMedia);
             await _dbContext.SaveChangesAsync(cancellationToken);
 
-            return CreatedAtAction(nameof(GetMedia), new { Id = userMedia.Id }, userMedia.Id);
+            return CreatedAtAction(nameof(GetMediaAsync), new { id = userMedia.Id }, userMedia.Id);
         }
 
         return BadRequest(response);
     }
 
-    [HttpGet("")]
+    [HttpGet("{id}/preview")]
     [ProducesResponseType(typeof(void), StatusCodes.Status200OK, "image/jpeg")]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult> GetMedia([FromQuery] GetMediaRequest request, CancellationToken cancellationToken)
+    public async Task<ActionResult> PreviewMediaAsync([FromRoute] Guid id, CancellationToken cancellationToken)
     {
-        var userMedia = await _dbContext.UserMedia.SingleOrDefaultAsync(u => u.Id == request.Id, cancellationToken);
+        var userMedia = await _dbContext.UserMedia.SingleOrDefaultAsync(u => u.Id == id, cancellationToken);
 
         if (userMedia == null)
         {
@@ -110,22 +110,41 @@ public class MediaController : ControllerBase
         return File(destinationStream, "image/jpeg");
     }
 
-    [HttpGet("search")]
+    [Produces("application/json")]
+    [HttpGet("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<ActionResult> SearchMedia([FromQuery] SearchMediaRequest request, CancellationToken cancellationToken)
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult> GetMediaAsync([FromRoute] Guid id, CancellationToken cancellationToken)
     {
-        var ids = await _dbContext.UserMedia
-            .Where(u => u.Title != null && u.Title.Contains(request.Query))
+        var userMedia = await _dbContext.UserMedia.SingleOrDefaultAsync(u => u.Id == id, cancellationToken);
+
+        if (userMedia == null)
+        {
+            return NotFound();
+        }
+
+        var response = new GetMediaResponse(id, userMedia.Title);
+        return Ok(response);
+    }
+
+    [HttpGet("")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<ActionResult> SearchMediaAsync([FromQuery] SearchMediaRequest request, CancellationToken cancellationToken)
+    {
+        var matches = await _dbContext.UserMedia
+            .Where(u => u.Title != null && u.Title.Contains(request.Title))
             .Take(10)
             .OrderBy(u => u.Title)
-            .Select(u => u.Id)
+            .Select(u => new { u.Id, u.Title })
             .ToListAsync(cancellationToken);
 
-        return Ok(new SearchMediaResult(ids));
+        var response = new SearchMediaResult(matches.Select(m => new GetMediaResponse(m.Id, m.Title)));
+        return Ok(response);
     }
 }
 
 public record UploadMediaRequest(string LocalPath, string Title);
-public record GetMediaRequest(Guid Id);
-public record SearchMediaRequest(string Query);
-public record SearchMediaResult(IEnumerable<Guid> Ids);
+public record GetMediaResponse(Guid Id, string? Title);
+public record SearchMediaRequest(string Title);
+public record SearchMediaResult(IEnumerable<GetMediaResponse> Matches);
