@@ -26,7 +26,7 @@ public class UserFollowingController : ControllerBase
     [HttpPost("")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult> CreateUserFollowingAsync(
+    public async Task<ActionResult> CreateUserFollowing(
         [FromBody] CreateUserFollowingRequest request, CancellationToken cancellationToken)
     {
         var isValidUser = await _dbContext.Users
@@ -62,7 +62,7 @@ public class UserFollowingController : ControllerBase
         _dbContext.UserFollowing.Add(userFollowing);
         await _dbContext.SaveChangesAsync(cancellationToken);
 
-        return Created();
+        return CreatedAtAction(nameof(GetUserFollowing), new { id = userFollowing.Id }, Map(userFollowing));
     }
 
     [Produces("application/json")]
@@ -70,7 +70,7 @@ public class UserFollowingController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult> GetUserFollowingAsync([FromRoute] Guid id, CancellationToken cancellationToken)
+    public async Task<ActionResult> GetUserFollowing([FromRoute] Guid id, CancellationToken cancellationToken)
     {
         var userFollowing = await _dbContext.UserFollowing.SingleOrDefaultAsync(u => u.Id == id, cancellationToken);
 

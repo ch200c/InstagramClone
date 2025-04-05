@@ -79,7 +79,6 @@ HTTP POST `/media` allows uploading objects to the selected bucket. After a succ
 - Error handling
 - Request validation
 - Move endpoint logic out of controllers
-- Investigate 201 Created route mapping for userFollowing
 - Check generated EF Core queries and potential issues
 - Add indexes
 - Use Guid instead of default string for Identity PK

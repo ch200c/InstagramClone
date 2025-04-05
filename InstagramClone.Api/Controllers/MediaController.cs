@@ -31,7 +31,7 @@ public class MediaController : ControllerBase
     [HttpPost("")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult> CreateMediaAsync(
+    public async Task<ActionResult> CreateMedia(
         [FromBody] UploadMediaRequest request, CancellationToken cancellationToken)
     {
         var bucketName = await _bucketNameProvider.GetBucketNameAsync(cancellationToken);
@@ -64,7 +64,7 @@ public class MediaController : ControllerBase
             _dbContext.UserMedia.Add(userMedia);
             await _dbContext.SaveChangesAsync(cancellationToken);
 
-            return CreatedAtAction(nameof(GetMediaAsync), new { id = userMedia.Id }, userMedia.Id);
+            return CreatedAtAction(nameof(GetMedia), new { id = userMedia.Id }, userMedia.Id);
         }
 
         return BadRequest(response);
@@ -74,7 +74,7 @@ public class MediaController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status200OK, "image/jpeg")]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult> PreviewMediaAsync([FromRoute] Guid id, CancellationToken cancellationToken)
+    public async Task<ActionResult> PreviewMedia([FromRoute] Guid id, CancellationToken cancellationToken)
     {
         var userMedia = await _dbContext.UserMedia.SingleOrDefaultAsync(u => u.Id == id, cancellationToken);
 
@@ -115,7 +115,7 @@ public class MediaController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult> GetMediaAsync([FromRoute] Guid id, CancellationToken cancellationToken)
+    public async Task<ActionResult> GetMedia([FromRoute] Guid id, CancellationToken cancellationToken)
     {
         var userMedia = await _dbContext.UserMedia.SingleOrDefaultAsync(u => u.Id == id, cancellationToken);
 
@@ -131,7 +131,7 @@ public class MediaController : ControllerBase
     [Produces("application/json")]
     [HttpGet("")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<ActionResult> SearchMediaAsync([FromQuery] SearchMediaRequest request, CancellationToken cancellationToken)
+    public async Task<ActionResult> SearchMedia([FromQuery] SearchMediaRequest request, CancellationToken cancellationToken)
     {
         var matches = await _dbContext.UserMedia
             .Where(u => u.Title != null && u.Title.Contains(request.Title))
