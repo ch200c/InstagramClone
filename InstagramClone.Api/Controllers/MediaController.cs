@@ -128,6 +128,7 @@ public class MediaController : ControllerBase
         return Ok(response);
     }
 
+    [Produces("application/json")]
     [HttpGet("")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult> SearchMediaAsync([FromQuery] SearchMediaRequest request, CancellationToken cancellationToken)

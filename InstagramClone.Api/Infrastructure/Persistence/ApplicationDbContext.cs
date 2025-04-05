@@ -11,7 +11,15 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
 
     public DbSet<UserMedia> UserMedia { get; set; }
 
+    public DbSet<UserFollowing> UserFollowing { get; set; }
+
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
     {
+    }
+
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        base.OnModelCreating(builder);
+        builder.Entity<UserBucketName>().HasIndex(u => u.UserId);
     }
 }

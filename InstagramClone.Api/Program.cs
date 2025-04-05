@@ -36,6 +36,7 @@ builder.Services
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddTransient<IBucketNameProvider, BucketNameProvider>();
+builder.Services.AddTransient<ILoggedInUserInformationProvider, LoggedInUserInformationProvider>();
 
 var app = builder.Build();
 
