@@ -37,6 +37,7 @@ builder.Services
 
 builder.Services.AddTransient<IBucketNameProvider, BucketNameProvider>();
 builder.Services.AddTransient<ILoggedInUserInformationProvider, LoggedInUserInformationProvider>();
+builder.Services.AddTransient<IDateTimeProvider, DateTimeProvider>();
 
 var app = builder.Build();
 

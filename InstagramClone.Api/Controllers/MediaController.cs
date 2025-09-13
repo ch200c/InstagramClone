@@ -19,12 +19,21 @@ public class MediaController : ControllerBase
     private readonly IMinioClient _minioClient;
     private readonly IBucketNameProvider _bucketNameProvider;
     private readonly ApplicationDbContext _dbContext;
+    private readonly ILoggedInUserInformationProvider _loggedInUserInformationProvider;
+    private readonly IDateTimeProvider _dateTimeProvider;
 
-    public MediaController(IMinioClient minioClient, IBucketNameProvider bucketNameProvider, ApplicationDbContext dbContext)
+    public MediaController(
+        IMinioClient minioClient, 
+        IBucketNameProvider bucketNameProvider, 
+        ApplicationDbContext dbContext, 
+        ILoggedInUserInformationProvider loggedInUserInformationProvider,
+        IDateTimeProvider dateTimeProvider)
     {
         _minioClient = minioClient;
         _bucketNameProvider = bucketNameProvider;
         _dbContext = dbContext;
+        _loggedInUserInformationProvider = loggedInUserInformationProvider;
+        _dateTimeProvider = dateTimeProvider;
     }
 
     [Produces("application/json")]
@@ -34,6 +43,7 @@ public class MediaController : ControllerBase
     public async Task<ActionResult> CreateMedia(
         [FromBody] UploadMediaRequest request, CancellationToken cancellationToken)
     {
+        var userId = await _loggedInUserInformationProvider.GetUserIdAsync(cancellationToken);
         var bucketName = await _bucketNameProvider.GetBucketNameAsync(cancellationToken);
         var makeBucketArgs = new MakeBucketArgs().WithBucket(bucketName);
 
@@ -59,7 +69,9 @@ public class MediaController : ControllerBase
             {
                 BucketName = bucketName,
                 ObjectName = response.ObjectName,
-                Title = request.Title
+                Title = request.Title,
+                UserId = userId,
+                CreatedAt = _dateTimeProvider.GetDateTime()
             };
             _dbContext.UserMedia.Add(userMedia);
             await _dbContext.SaveChangesAsync(cancellationToken);
