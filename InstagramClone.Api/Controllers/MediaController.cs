@@ -136,7 +136,7 @@ public class MediaController : ControllerBase
             return NotFound();
         }
 
-        var response = new GetMediaResponse(id, userMedia.Title);
+        var response = new GetMediaResponse(id, userMedia.Title, userMedia.CreatedAt);
         return Ok(response);
     }
 
@@ -149,15 +149,15 @@ public class MediaController : ControllerBase
             .Where(u => u.Title != null && u.Title.Contains(request.Title))
             .Take(10)
             .OrderBy(u => u.Title)
-            .Select(u => new { u.Id, u.Title })
+            .Select(u => new GetMediaResponse(u.Id, u.Title, u.CreatedAt))
             .ToListAsync(cancellationToken);
 
-        var response = new SearchMediaResult(matches.Select(m => new GetMediaResponse(m.Id, m.Title)));
+        var response = new GetMediaListResponse(matches);
         return Ok(response);
     }
 }
 
 public record UploadMediaRequest(string LocalPath, string Title);
-public record GetMediaResponse(Guid Id, string? Title);
+public record GetMediaResponse(Guid Id, string? Title, DateTime CreatedAt);
 public record SearchMediaRequest(string Title);
-public record SearchMediaResult(IEnumerable<GetMediaResponse> Matches);
+public record GetMediaListResponse(IEnumerable<GetMediaResponse> Data);
