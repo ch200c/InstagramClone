@@ -1,5 +1,5 @@
 # InstagramClone
-Work in progress Instagram clone made with .NET 9.0, .NET Aspire (orchestration, observability), MinIO (object storage) and PostgreSQL (DB).
+Simplified Instagram API clone made with .NET 9.0, .NET Aspire (orchestration, observability), MinIO (object storage) and PostgreSQL (DB).
 
 ## Solution structure
 - `InstagramClone.AppHost`: main entry point of the application, orchestrating other projects using .NET Aspire.
@@ -47,7 +47,7 @@ Once the API is running, you can generate some test users, images and user follo
 
 `dotnet run --project InstagramClone.DataSeeding`
 
-You can easily configure the amount of users, images and user followings by tweaking variables in `InstagramClone.DataSeeding` project's `Program.cs`
+You can easily configure the amount of users, images and user followings by tweaking variables in `InstagramClone.DataSeeding` project's `Program.cs`.
 
 ## Using the application
 Currently, the functionality is only contained within the API. You can find its URL by clicking on `api` resource in .NET Aspire dashboard and then finding `https target port` endpoint. Its port can change between different runs due to reverse proxy created by .NET Aspire. More inforamtion can be found [here](https://learn.microsoft.com/en-us/dotnet/aspire/fundamentals/networking-overview#how-endpoints-work).
@@ -79,10 +79,20 @@ One of the most basic ways to authenticate is to use `/register` endpoint to reg
 ```
 
 ### API
-HTTP POST `/media` allows uploading objects to the selected bucket. After a successful upload you can view the object in MinIO Console.
+HTTP POST `/api/media` allows uploading images to the object storage. It conveniently creates a bucket for the user performing the request and all following user uploads will be performed to that bucket. On success, this endpoint returns an ID you can then query at `api/media/{id}/preview` or `api/media/{id}/`. Moreover, after a successful upload you can also view the image in MinIO Console.
 
-![Object upload](images/upload.png "Object upload")
-![MinIO Console](images/minio-console.png "MinIO Console")
+![Media preview endpoint](images/media-preview.png "Media preview endpoint")
+![Media endpoint](images/media.png "Media endpoint")
+![Database view](images/db-media.png "Database view")
+![MinIO preview](images/minio-preview.png "MinIO preview")
+
+--- 
+
+HTTP POST `/api/userFollowing` allows following other users.
+
+---
+
+HTTP GET `/api/feed` returns the feed for user performing the request. It returns latest media from followed users.
 
 ## TODO
 - Error handling
