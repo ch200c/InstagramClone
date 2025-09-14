@@ -5,6 +5,7 @@ Work in progress Instagram clone made with .NET 9.0, .NET Aspire (orchestration,
 - `InstagramClone.AppHost`: main entry point of the application, orchestrating other projects using .NET Aspire.
 - `InstagramClone.Api`: API project. Uses ASP.NET Core Identity to handle authentication, generates OpenAPI documents and has [Scalar](https://github.com/scalar/scalar) client.
 - `InstagramClone.ServiceDefaults`: class library that adds common .NET Aspire services. Used by `InstagramClone.Api`.
+- `InstagramClone.DataSeeding`: console app for generating test data.
 
 ## Running locally with Docker
 
@@ -39,6 +40,14 @@ Upon successful run, your console output should have the URL to login to the .NE
 `Login to the dashboard at https://localhost:17219/login?t=token`
 
 ![.NET Aspire dashboard](images/dashboard.png ".NET Aspire dashboard")
+
+### Optional: Data Seeding
+
+Once the API is running, you can generate some test users, images and user followings by executing the following command from solution's root directory.
+
+`dotnet run --project InstagramClone.DataSeeding`
+
+You can easily configure the amount of users, images and user followings by tweaking variables in `InstagramClone.DataSeeding` project's `Program.cs`
 
 ## Using the application
 Currently, the functionality is only contained within the API. You can find its URL by clicking on `api` resource in .NET Aspire dashboard and then finding `https target port` endpoint. Its port can change between different runs due to reverse proxy created by .NET Aspire. More inforamtion can be found [here](https://learn.microsoft.com/en-us/dotnet/aspire/fundamentals/networking-overview#how-endpoints-work).

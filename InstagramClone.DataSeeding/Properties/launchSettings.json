@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "InstagramClone.DataSeeding": {
+      "commandName": "Project"
+    },
+    "Container (Dockerfile)": {
+      "commandName": "Docker"
+    }
+  }
+}
