@@ -81,10 +81,10 @@ One of the most basic ways to authenticate is to use `/register` endpoint to reg
 ### API
 HTTP POST `/api/media` allows uploading images to the object storage. It conveniently creates a bucket for the user performing the request and all following user uploads will be performed to that bucket. On success, this endpoint returns an ID you can then query at `api/media/{id}/preview` or `api/media/{id}/`. Moreover, after a successful upload you can also view the image in MinIO Console.
 
-![Media preview endpoint](images/media-preview.png "Media preview endpoint")
-![Media endpoint](images/media.png "Media endpoint")
-![Database view](images/db-media.png "Database view")
-![MinIO preview](images/minio-preview.png "MinIO preview")
+![Media preview endpoint](images/media-preview.PNG "Media preview endpoint")
+![Media endpoint](images/media.PNG "Media endpoint")
+![Database view](images/db-media.PNG "Database view")
+![MinIO preview](images/minio-preview.PNG "MinIO preview")
 
 --- 
 
